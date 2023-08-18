@@ -6,6 +6,8 @@ from rest_framework import mixins
 from rest_framework import generics
 from rest_framework import permissions
 from rest_framework import renderers
+from rest_framework import viewsets
+from rest_framework.decorators import action
 
 # create single entry point for API
 from rest_framework.decorators import api_view
@@ -13,30 +15,6 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
 from django.contrib.auth.models import User
-
-class BookList(generics.ListCreateAPIView):
-	queryset = Book.objects.all()
-	serializer_class = BookSerializer
-	permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-
-	def perform_create(self, serializer):
-		serializer.save(owner=self.request.user)
-	
-
-class BookDetail(generics.RetrieveUpdateDestroyAPIView):
-	queryset = Book.objects.all()
-	serializer_class = BookSerializer
-	permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
-
-
-class UserList(generics.ListAPIView):
-	queryset = User.objects.all()
-	serializer_class = UserSerializer
-
-
-class UserDetail(generics.RetrieveAPIView):
-	queryset = User.objects.all()
-	serializer_class = UserSerializer
 
 
 @api_view(['GET'])
@@ -47,10 +25,21 @@ def api_root(request, format=None):
 	})
 
 
-class BookRate(generics.GenericAPIView):
+class BookViewSet(viewsets.ModelViewSet):
 	queryset = Book.objects.all()
-	renderer_classes = [renderers.StaticHTMLRenderer]
+	serializer_class = BookSerializer
+	permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
-	def get(self, request, *args, **kwargs):
+	@action(detail=True, renderer_classes=[renderers.HTMLFormRenderer])
+	def rate(self, request, *args, **kwargs):
 		book = self.get_object()
 		return Response(book.rated)
+
+	def perform_create(self, serializer):
+		serializer.save(owner=self.request.user)
+
+
+class UserViewSet(viewsets.ReadOnlyModelViewSet):
+	queryset = User.objects.all()
+	serializer_class = UserSerializer
+
