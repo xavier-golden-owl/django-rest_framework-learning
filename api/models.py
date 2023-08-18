@@ -10,4 +10,4 @@ class Book(models.Model):
 		ordering = ['-release']
 
 	def __str__(self):
-		return title
+		return self.title
