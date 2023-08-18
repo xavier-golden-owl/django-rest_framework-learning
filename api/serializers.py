@@ -6,9 +6,11 @@ from rest_framework import serializers
 
 
 class BookSerializer(serializers.ModelSerializer):
+	owner = serializers.ReadOnlyField(source='owner.username')
+	rate = serializers.ReadOnlyField()
 	class Meta:
 		model = Book
-		fields = ['title', 'author', 'release']
+		fields = '__all__'
 
 	
 class UserSerializer(serializers.ModelSerializer):
