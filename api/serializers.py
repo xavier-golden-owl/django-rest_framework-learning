@@ -7,7 +7,7 @@ from rest_framework import serializers
 
 class BookSerializer(serializers.HyperlinkedModelSerializer):
 	owner = serializers.ReadOnlyField(source='owner.username')
-	rate = serializers.HyperlinkedIdentityField(view_name='book-rate', format='json')
+	rate = serializers.HyperlinkedIdentityField(view_name='book-rate', format='html')
 
 	class Meta:
 		model = Book
