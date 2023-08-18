@@ -5,15 +5,17 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 
 
-class BookSerializer(serializers.ModelSerializer):
+class BookSerializer(serializers.HyperlinkedModelSerializer):
 	owner = serializers.ReadOnlyField(source='owner.username')
-	rate = serializers.ReadOnlyField()
+	rate = serializers.HyperlinkedIdentityField(view_name='book-rate', format='json')
+
 	class Meta:
 		model = Book
-		fields = '__all__'
+		fields = ['url', 'id', 'title', 'author', 'release', 'rate', 'owner']
 
 	
 class UserSerializer(serializers.ModelSerializer):
+	books = serializers.HyperlinkedRelatedField(many=True, view_name='book-detail', read_only=True)
 	class Meta:
 		model = User
-		fields = ['id', 'username', 'books']
+		fields = ['url', 'id', 'username', 'books']

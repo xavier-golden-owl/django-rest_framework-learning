@@ -6,10 +6,14 @@ from . import views
 
 
 urlpatterns = [
-	path('books/', views.BookList.as_view()),
-	path('books/<int:pk>/', views.BookDetail.as_view()),
-	path('users/', views.UserList.as_view()),
-	path('users/<int:pk>/', views.UserDetail.as_view()),
+	path('', views.api_root),
+
+	path('books/', views.BookList.as_view(), name='book-list'),
+	path('books/<int:pk>/', views.BookDetail.as_view(), name='book-detail'),
+	path('books/<int:pk>/rate/', views.BookRate.as_view(), name='book-rate'),
+
+	path('users/', views.UserList.as_view(), name='user-list'),
+	path('users/<int:pk>/', views.UserDetail.as_view(), name='user-detail'),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
